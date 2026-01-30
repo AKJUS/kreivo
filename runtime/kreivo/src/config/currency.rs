@@ -90,9 +90,10 @@ pub type KreivoAssetsCall = pallet_assets::Call<Runtime, KreivoAssetsInstance>;
 impl pallet_assets::Config<KreivoAssetsInstance> for Runtime {
 	type RuntimeEvent = RuntimeEvent;
 	type Balance = Balance;
-	type RemoveItemsLimit = frame_support::traits::ConstU32<1000>;
+	type RemoveItemsLimit = ConstU32<1000>;
 	type AssetId = FungibleAssetLocation;
 	type AssetIdParameter = FungibleAssetLocation;
+	type ReserveData = (); // We abide by the rules of Asset Hub
 	type Currency = Balances;
 	/// Only root can create assets and force state changes.
 	#[cfg(not(feature = "runtime-benchmarks"))]

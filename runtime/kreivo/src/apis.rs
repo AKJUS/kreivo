@@ -1,6 +1,7 @@
 use super::*;
 use pallet_contracts::{CollectEvents, DebugInfo, Determinism};
 use pallet_revive::evm::runtime::EthExtra;
+use pallet_revive::impl_runtime_apis_plus_revive_traits;
 use sp_api::impl_runtime_apis;
 use sp_core::OpaqueMetadata;
 use sp_runtime::{
@@ -43,10 +44,12 @@ impl EthExtra for EthExtraImpl {
 	}
 }
 
-pallet_revive::impl_runtime_apis_plus_revive! {
+impl_runtime_apis_plus_revive_traits! {
 	Runtime,
+	Revive,
 	Executive,
 	EthExtraImpl,
+
 	impl sp_consensus_aura::AuraApi<Block, AuraId> for Runtime {
 		fn slot_duration() -> sp_consensus_aura::SlotDuration {
 			sp_consensus_aura::SlotDuration::from_millis(RELAY_CHAIN_SLOT_DURATION_MILLIS)
@@ -71,7 +74,7 @@ pallet_revive::impl_runtime_apis_plus_revive! {
 			VERSION
 		}
 
-		fn execute_block(block: Block) {
+		fn execute_block(block: <Block as BlockT>::LazyBlock) {
 			Executive::execute_block(block)
 		}
 
@@ -108,7 +111,7 @@ pallet_revive::impl_runtime_apis_plus_revive! {
 		}
 
 		fn check_inherents(
-			block: Block,
+			block: <Block as BlockT>::LazyBlock,
 			data: sp_inherents::InherentData,
 		) -> sp_inherents::CheckInherentsResult {
 			data.check_extrinsics(&block)
@@ -322,7 +325,7 @@ pallet_revive::impl_runtime_apis_plus_revive! {
 		}
 
 		fn execute_block(
-			block: Block,
+			block: <Block as BlockT>::LazyBlock,
 			state_root_check: bool,
 			signature_check: bool,
 			select: frame_try_runtime::TryStateSelect,

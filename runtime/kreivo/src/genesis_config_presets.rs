@@ -82,6 +82,7 @@ mod local {
 				metadata: vec![(FungibleAssetLocation::Here(1), b"testUSD".to_vec(), b"tUSD".to_vec(), 3)],
 				accounts: vec![(FungibleAssetLocation::Here(1), alice(), 100_000_000_000)],
 				next_asset_id: None,
+				reserves: vec![],
 			},
 		});
 

@@ -168,10 +168,10 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	spec_name: Borrowed("kreivo-parachain"),
 	impl_name: Borrowed("kreivo-parachain"),
 	authoring_version: 1,
-	spec_version: 132,
+	spec_version: 133,
 	impl_version: 0,
 	apis: RUNTIME_API_VERSIONS,
-	transaction_version: 12,
+	transaction_version: 13,
 	system_version: 1,
 };
 
