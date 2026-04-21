@@ -1,7 +1,5 @@
 use super::*;
 use pallet_contracts::{CollectEvents, DebugInfo, Determinism};
-use pallet_revive::evm::runtime::EthExtra;
-use pallet_revive::impl_runtime_apis_plus_revive_traits;
 use sp_api::impl_runtime_apis;
 use sp_core::OpaqueMetadata;
 use sp_runtime::{
@@ -14,42 +12,7 @@ use sp_version::RuntimeVersion;
 type EventRecord =
 	frame_system::EventRecord<<Runtime as frame_system::Config>::RuntimeEvent, <Runtime as frame_system::Config>::Hash>;
 
-/// Default extensions applied to Ethereum transactions.
-#[derive(Clone, PartialEq, Eq, Debug)]
-pub struct EthExtraImpl;
-
-impl EthExtra for EthExtraImpl {
-	type Config = Runtime;
-	type Extension = TransactionExtensions;
-
-	fn get_eth_extension(nonce: u32, tip: Balance) -> Self::Extension {
-		#[cfg(feature = "zombienet")]
-		let _ = tip;
-		(
-			#[cfg(not(feature = "zombienet"))]
-			PassAuthenticate::default(),
-			frame_system::CheckNonZeroSender::<Runtime>::new(),
-			frame_system::CheckSpecVersion::<Runtime>::new(),
-			frame_system::CheckTxVersion::<Runtime>::new(),
-			frame_system::CheckGenesis::<Runtime>::new(),
-			frame_system::CheckMortality::from(generic::Era::Immortal),
-			frame_system::CheckNonce::<Runtime>::from(nonce),
-			frame_system::CheckWeight::<Runtime>::new(),
-			#[cfg(not(feature = "zombienet"))]
-			SkipCheckIfFeeless::from(ChargeGasTxPayment::new(ChargeAssetTxPayment::from(
-				tip,
-				Default::default(),
-			))),
-		)
-	}
-}
-
-impl_runtime_apis_plus_revive_traits! {
-	Runtime,
-	Revive,
-	Executive,
-	EthExtraImpl,
-
+impl_runtime_apis! {
 	impl sp_consensus_aura::AuraApi<Block, AuraId> for Runtime {
 		fn slot_duration() -> sp_consensus_aura::SlotDuration {
 			sp_consensus_aura::SlotDuration::from_millis(RELAY_CHAIN_SLOT_DURATION_MILLIS)
@@ -135,8 +98,8 @@ impl_runtime_apis_plus_revive_traits! {
 	}
 
 	impl sp_session::SessionKeys<Block> for Runtime {
-		fn generate_session_keys(seed: Option<Vec<u8>>) -> Vec<u8> {
-			SessionKeys::generate(seed)
+		fn generate_session_keys(owner: Vec<u8>, seed: Option<Vec<u8>>) -> sp_session::OpaqueGeneratedSessionKeys {
+			SessionKeys::generate(&owner, seed).into()
 		}
 
 		fn decode_session_keys(
@@ -152,33 +115,7 @@ impl_runtime_apis_plus_revive_traits! {
 		}
 	}
 
-	impl assets_common::runtime_api::FungiblesApi<
-		Block,
-		AccountId,
-	> for Runtime
-	{
-		fn query_account_balances(account: AccountId) -> Result<xcm::VersionedAssets, assets_common::runtime_api::FungiblesAccessError> {
-			use assets_common::fungible_conversion::{convert, convert_balance};
-			Ok([
-				// collect pallet_balance
-				{
-					let balance = Balances::free_balance(account.clone());
-					if balance > 0 {
-						vec![convert_balance::<RelayLocation, Balance>(balance)?]
-					} else {
-						vec![]
-					}
-				},
-				// collect pallet_assets (TrustBackedAssets)
-				convert::<_, _, _, _, LocationConvertedConcreteId>(
-					Assets::account_balances(account)
-						.iter()
-						.filter(|(_, balance)| balance > &0)
-				)?,
-				// collect ... e.g. other tokens
-			].concat().into())
-		}
-	}
+
 
 	impl pallet_transaction_payment_rpc_runtime_api::TransactionPaymentApi<Block, Balance> for Runtime {
 		fn query_info(

@@ -38,7 +38,6 @@ virto-common = { workspace = true, default-features = false, features = [
 ] }
 
 # Substrate
-assets-common.workspace = true
 frame-benchmarking = { workspace = true, optional = true }
 frame-executive.workspace = true
 frame-support.workspace = true
@@ -60,7 +59,6 @@ pallet-preimage.workspace = true
 pallet-proxy.workspace = true
 pallet-ranked-collective.workspace = true
 pallet-referenda.workspace = true
-pallet-revive.workspace = true
 pallet-scheduler.workspace = true
 pallet-session.workspace = true
 pallet-skip-feeless-payment.workspace = true
@@ -131,7 +129,7 @@ default = ["std"]
 paseo = ["runtime-constants/paseo"]
 zombienet = []
 std = [
-  "assets-common/std",
+
   "cumulus-pallet-aura-ext/std",
   "cumulus-pallet-parachain-system/std",
   "cumulus-pallet-session-benchmarking/std",
@@ -172,7 +170,6 @@ std = [
   "pallet-ranked-collective/std",
   "pallet-referenda/std",
   "pallet-referenda-tracks/std",
-  "pallet-revive/std",
   "pallet-scheduler/std",
   "pallet-session/std",
   "pallet-skip-feeless-payment/std",
@@ -224,7 +221,7 @@ std = [
 ]
 
 runtime-benchmarks = [
-  "assets-common/runtime-benchmarks",
+
   "cumulus-pallet-session-benchmarking/runtime-benchmarks",
   "cumulus-pallet-parachain-system/runtime-benchmarks",
   "cumulus-pallet-xcmp-queue/runtime-benchmarks",
@@ -254,7 +251,6 @@ runtime-benchmarks = [
   "pallet-ranked-collective/runtime-benchmarks",
   "pallet-referenda/runtime-benchmarks",
   "pallet-referenda-tracks/runtime-benchmarks",
-  "pallet-revive/runtime-benchmarks",
   "pallet-scheduler/runtime-benchmarks",
   "pallet-skip-feeless-payment/runtime-benchmarks",
   "pallet-sudo/runtime-benchmarks",
@@ -287,7 +283,7 @@ runtime-benchmarks = [
 ]
 
 try-runtime = [
-  "assets-common/try-runtime",
+
   "cumulus-pallet-aura-ext/try-runtime",
   "cumulus-pallet-parachain-system/try-runtime",
   "cumulus-pallet-xcm/try-runtime",
@@ -322,7 +318,6 @@ try-runtime = [
   "pallet-ranked-collective/try-runtime",
   "pallet-referenda/try-runtime",
   "pallet-referenda-tracks/try-runtime",
-  "pallet-revive/try-runtime",
   "pallet-scheduler/try-runtime",
   "pallet-session/try-runtime",
   "pallet-skip-feeless-payment/try-runtime",
